@@ -1,0 +1,30 @@
+#lang racket
+#| En este módulo se implementan las funciones que hacen posible ejecutar el algoritmo goloso
+requerido para que la máquina tome las decisiones acerca de la mejor posición para el tablero.
+
+El algoritmo heurístico se ejecuta siguiendo los siguientes pasos:
+
+* Conjunto de candidatos: Se debe recibir una matriz y de ella obtener pares ordenados representando a
+las posiciones que tengan un 0 (esto quiere decir que la posición está vacía)
+
+* Función de selección: Elije al mejor candidato para poder llegar a una solución (solución = ganar)
+
+* Función de viabilidad: Se usa para determinar si un candidato se puede usar para llegar a una solución
+
+* Función objetivo: Asigna el valor a una solución o a una solución parcial
+
+*Función solución: Indica cuando se ha logrado llegar a una solución
+|#
+
+
+#| Función que recibe una matriz mxn con 1's, 2's y 0's. Recorre la matriz y retorna las posiciones que contengan a un 0.
+Las posiciones se devuelven como elementos de una lista.
+|#
+(define (conjunto_candidatos matriz)
+  (conjunto_candidatos_aux matriz 1 1 '()))
+
+(define (conjunto_candidatos_aux matriz fila columna candidatos)
+  (cond ((null? matriz) (invertir_lista candidatos))
+        ((null? (car matriz)) (conjunto_candidatos_aux (cdr matriz) (+ fila 1) 1 candidatos))
+        ((zero? (caar matriz)) (conjunto_candidatos_aux (cons (cdar matriz) (cdr matriz)) fila (+ columna 1) (cons (list fila columna) candidatos)))
+        (else (conjunto_candidatos_aux (cons (cdar matriz) (cdr matriz)) fila (+ columna 1) candidatos))))
