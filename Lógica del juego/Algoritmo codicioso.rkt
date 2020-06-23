@@ -9,9 +9,10 @@ El algoritmo heurístico se ejecuta siguiendo los siguientes pasos:
 * Conjunto de candidatos: Se debe recibir una matriz y de ella obtener pares ordenados representando a
 las posiciones que tengan un 0 (esto quiere decir que la posición está vacía)
 
-* Función de selección: Elije al mejor candidato para poder llegar a una solución (solución = ganar)
+* Función de selección: Elije un conjunto de posibles soluciones que deben der evaluadas por la funcion de viabilidad
 
-* Función de viabilidad: Se usa para determinar si un candidato se puede usar para llegar a una solución
+* Función de viabilidad: Se usa para determinar el peso que ejerce cada candidato seleccionado y poder dar la mejor
+selección.
 
 * Función objetivo: Asigna el valor a una solución o a una solución parcial
 
