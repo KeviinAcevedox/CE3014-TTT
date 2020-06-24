@@ -10,39 +10,34 @@ El algoritmo heurístico se ejecuta siguiendo los siguientes pasos:
 las posiciones que tengan un 0 (esto quiere decir que la posición está vacía)
 
 * Función de selección: Elije un conjunto de posibles soluciones que deben der evaluadas por la funcion de viabilidad
+Será fusionada junto con la función de conjunto candidatos. Esto debido a que los candidatos seleccionados serán todos
+los que tengan 0´s (estén disponibles)
 
 * Función de viabilidad: Se usa para determinar el peso que ejerce cada candidato seleccionado y poder dar la mejor
 selección.
 
-* Función objetivo: Asigna el valor a una solución o a una solución parcial
+* Función objetivo: Tomará el resultado de la función de viabilidad y dará una nueva posición a la matriz, este es el
+candidato que tenga más peso.
 
 *Función solución: Indica cuando se ha logrado llegar a una solución
 |#
 
 
 #| Función que recibe una matriz mxn con 1's, 2's y 0's. Recorre la matriz y retorna las posiciones que contengan a un 0.
-Las posiciones se devuelven como elementos de una lista.
+Las posiciones se devuelven como pares ordenados dentro de una lista.
 |#
-(define (conjunto_candidatos matriz)
-  (conjunto_candidatos_aux matriz 1 1 '()))
+(define (seleccionar_candidatos matriz)
+  (seleccionar_candidatos_aux matriz 1 1 '()))
 
-(define (conjunto_candidatos_aux matriz fila columna candidatos)
+(define (seleccionar_candidatos_aux matriz fila columna candidatos)
   (cond ((null? matriz) (invertir_lista candidatos))
-        ((null? (car matriz)) (conjunto_candidatos_aux (cdr matriz) (+ fila 1) 1 candidatos))
-        ((zero? (caar matriz)) (conjunto_candidatos_aux (cons (cdar matriz) (cdr matriz)) fila (+ columna 1) (cons (list fila columna) candidatos)))
-        (else (conjunto_candidatos_aux (cons (cdar matriz) (cdr matriz)) fila (+ columna 1) candidatos))))
-
-#| Función de selección: Teniendo un conjunto de candidatos, se debe escoger al mejor para contribuir a la solución
-Se va a usar una lista que contiene sublistas, estas sublistas representarán las soluciones que están disponibles para
-la máquina, pueden ser soluciones parciales, vacías o casi totales.
-
-Cada elemento de una sublista será una tripleta ---> (fila columna valor)
-|#
+        ((null? (car matriz)) (seleccionar_candidatos_aux (cdr matriz) (+ fila 1) 1 candidatos))
+        ((zero? (caar matriz)) (seleccionar_candidatos_aux (cons (cdar matriz) (cdr matriz)) fila (+ columna 1) (cons (list fila columna) candidatos)))
+        (else (seleccionar_candidatos_aux (cons (cdar matriz) (cdr matriz)) fila (+ columna 1) candidatos))))
 
 ;función que convierte un vector fila o vector columna en posiciones triples --> (fila columna valor)
 ;Recibe: Una fila o columna, el numero de fila o columna del vector, el valor del jugador (1 si es el usuario, 2 si es la máquina)
 ;y por último el tipo de vector --> ("fila" o "columna")
-
 
 (define (vector_solucion vector posicion_vector valor tipo_vector)
   (vector_solucion_aux vector valor '() posicion_vector 1 tipo_vector))
