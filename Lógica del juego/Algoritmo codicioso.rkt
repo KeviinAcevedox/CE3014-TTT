@@ -8,59 +8,27 @@ requerido para que la máquina tome las decisiones acerca de la mejor posición 
 |#
 
 
-;************************************************************************************************************************                
-#|
-Esta es la función de selección, recibe como parámetro la matriz lógica (enviada desde la interfaz). Su rol se basa
-en recorrer la matriz y buscar aquellas posiciones que estén disponibles para que la máquina elija la mejor.
+;;*************************************************************************************************************************
+;    CONJUNTO DE CANDIDATOS Y SELECCIÓN
+;**************************************************************************************************************************
 
-Entrada: una matriz lógica que representa la matriz que se ve desde la interfaz gráfica.
-
-Salida: una lista que contiene elementos del siguiente tipo --> (fila columna plus). Un plus es un sumador de viabilidad
-|#
 (define (seleccionar_candidatos matriz)
   (seleccionar_candidatos_aux matriz 1 1 '()))
 
 (define (seleccionar_candidatos_aux matriz fila columna candidatos)
   (cond ((null? matriz) (invertir_lista candidatos))
         ((null? (car matriz)) (seleccionar_candidatos_aux (cdr matriz) (+ fila 1) 1 candidatos))
-        ((zero? (caar matriz)) (seleccionar_candidatos_aux (cons (cdar matriz) (cdr matriz)) fila (+ columna 1) (cons (list fila columna 0) candidatos)))
+        ((zero? (caar matriz)) (seleccionar_candidatos_aux
+                                (cons (cdar matriz)
+                                      (cdr matriz)) fila (+ columna 1) (cons (list fila columna 0) candidatos)))
+        
         (else (seleccionar_candidatos_aux (cons (cdar matriz) (cdr matriz)) fila (+ columna 1) candidatos))))
 
 
+
 ;**************************************************************************************************************************
-#|
-Esta es la función de viabilidad, debe recibir la matriz lógica y además la lista de candidatos seleccionados.
-
-Para poder determinar la viabilidad de cada uno de los candidatos seleccionados se tomarán en cuenta todos los
-vectores fila, vectores columna, vectores diagonales(/) y vectores diagonales inversos(\) que estén totalmente
-disponibles (todos con 0's) o que tengan valores con 2's.
-
-Si se tienen TODOS los vectores de la matriz (los disponibles) se va a proceder a tomar cada uno de los candidatos
-seleccionados y se van a pasar por la función llamada entrevista, la cual recibe un elemento de tipo
-(fila columna plus) y se encargará de evaluar las intersecciones con los vectores solución.
-
-Los pesos se asignan de la siguiente manera:
-
-* Interseca con un vector solución y este vector tiene todos los espacios disponibles ---> +1
-* Interseca con un vector solución y este vector tiene N espacios ocupados con un 2 ---> +1 +N
-
-Casos especiales:
-
-
-* En caso de tener varios pesos mayores iguales se elegirá aleatoriamente, esto ya que con cualquiera de ellos se
-cuenta con las mismas condiciones.
-Si alguno de esos candidatos es el elemento que falta para completar una solución se le sumará 100.
-En caso contrario, se elegirá uno aleatorio y a ese se le sumará 100.
-
-|#
-
-#|
-Función que recibe una matriz y retorna TODOS los vectores solución válidos en el turno.
-
-Entrada:
-
-Salida:
-|#
+;    VIABILIDAD
+;**************************************************************************************************************************
 
 (define (vectores_soluciones matriz valor)
   (agregar_diagonal_inversa (crear_matriz_exacta matriz) '() valor))
@@ -80,9 +48,6 @@ Salida:
 
 (define (agregar_fila matriz_exacta vectores_total valor)
   (filtro_vector (append matriz_exacta vectores_total) valor))
-
-;Función que busca los vectores solucion pero del jugador adversario
-
 
 
 ;Recibe los candidatos seleccionados y los vectores solución
@@ -151,18 +116,9 @@ Salida:
 
 
   
-;*******************************************************************************************************************
-#|
-Ahora se define la función objetivo, esta se encarga de ordenar los candidatos seleccionados en orden decendente
-debido a que por eficiencia nos sirve tener al candidato con mayor plus o a los candidatos con mayor plus al inicio.
-
-|#
-
-;Algoritmo de ordenamiento Quick Sort para ordenar a los candidatos en orden decendente.
-; Tomando como pivote al primer elemento
-; Se forma una lista con los elementos menores que el pivote
-; y otra con los elementos mayores que el pivote
-; luego se palica la misma técnica con las dos listas formadas uniendolas mediante la función append
+;**************************************************************************************************************************
+;    OBJETIVO
+;**************************************************************************************************************************
 
 (define (Quick_Sort lista)
   (cond ((null? lista) lista)
@@ -236,13 +192,48 @@ debido a que por eficiencia nos sirve tener al candidato con mayor plus o a los 
         (else (actualiza_vector elegido (cdr vector) (cons (car vector) final)))))
 
 
-;***************************************************************************************************************************
-;***************************************************************************************************************************
-;***************************************************************************************************************************
+;**************************************************************************************************************************
+;    SOLUCIÓN
+;**************************************************************************************************************************
 
-;ALGORITMO CODICIOSO EN UNA FUNCION FINAL
+;Función que determina si el jugador ya ganó
+(define (solucion_jugador? matriz vectores_soluciones)
+  (cond ((null? vectores_soluciones) #f)
+        ((equal? (Boost (car vectores_soluciones) 1 0) (length (car vectores_soluciones))) #t)
+        (else (solucion_jugador? matriz (cdr vectores_soluciones)))))
+
+;Función solución, valida si ya se ha llegado a una solución una vez puesto el mejor candidato
+(define (solucion? matriz_actualizada vectores_solucion_actualizados)
+  (cond ((null? vectores_solucion_actualizados) matriz_actualizada)
+
+        ;Llegué a una solución con este primer vector?
+        ((equal? (Boost (car vectores_solucion_actualizados) 2 0) (length (car vectores_solucion_actualizados))) "Hemos llegado a una solución")
+        
+        (else (solucion? matriz_actualizada (cdr vectores_solucion_actualizados)))))
+
+  
+
+;**************************************************************************************************************************
+;    PRUEBAS Y DEFINICIONES FINALES
+;**************************************************************************************************************************
+
+#|
+Esta función usa todas las definiciones anteriores para tomar una desición.
+
+Si no hay gane por parte del usuario el procedimiento es el siguiente:
+
+1- Función de selección.
+
+2- Función de viabilidad.
+
+3- Función objetivo.
+
+4- Función solucion?.
+|#
+
 (define  (algoritmo_codicioso matriz)
-  (seleccion matriz))
+  (cond ((solucion_jugador? matriz (vectores_soluciones matriz 1)) "El usuario ya ganó")
+        (else (seleccion matriz))))
 
 ;Función de seleccion
 (define (seleccion matriz)
@@ -259,22 +250,10 @@ debido a que por eficiencia nos sirve tener al candidato con mayor plus o a los 
 (define (objetivo_aux matriz elegido vectores_solucion)
   (solucion? (actualizar_matriz elegido 2 matriz) (actualizar_vectores_solucion elegido vectores_solucion '())))
                                                                                               
-;Función solución
-(define (solucion? matriz_actualizada vectores_solucion_actualizados)
-  (cond ((null? vectores_solucion_actualizados) matriz_actualizada)
-
-        ;Llegué a una solución
-        ((equal? (Boost (car vectores_solucion_actualizados) 2 0) (length (car vectores_solucion_actualizados))) "Hemos llegado a una solución")
-
-        ;El adversario llegó a una solución
-        ((equal? (Boost (car vectores_solucion_actualizados) 1 0) (length (car vectores_solucion_actualizados))) "El jugador llegó a una solución")
-
-        (else (solucion? matriz_actualizada (cdr vectores_solucion_actualizados)))))
-
-             
-;*************************************************************************************************************+
+           
+;****************************************************************************************************************************
 ;matriz de prueba
-(define matriz '((0 1 1) (0 2 0) (0 0 0)))
+(define matriz '((1 1 1) (2 2 0) (0 0 0)))
 
 ;Candidatos sin evaluar
 (define c (seleccionar_candidatos matriz))
@@ -296,19 +275,3 @@ debido a que por eficiencia nos sirve tener al candidato con mayor plus o a los 
 
 ;Resultado al usar el algoritmo con la matriz dada
 (define M (algoritmo_codicioso matriz))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
