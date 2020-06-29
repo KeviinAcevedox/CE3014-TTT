@@ -4,6 +4,6 @@ Se trata de la programación del juego Tic Tac Toe para matrices MxN.
 
 * Integrantes del proyecto: Kevin Acevedo y Hazel Martínez.
 * Lenguaje de programación: Racket
-* Librerías utilizadas:
+* Librerías utilizadas:Racket gui
 * Fecha de inicio: 18 - 6 - 2020
-* Fecha de finlaización: 
+* Fecha de finlaización: 29 - 6 -2020
