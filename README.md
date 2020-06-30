@@ -7,3 +7,6 @@ Se trata de la programación del juego Tic Tac Toe para matrices MxN.
 * Librerías utilizadas: graphics
 * Fecha de inicio: 18 - 6 - 2020
 * Fecha de finlaización: 29 - 6 - 2020
+* Librerías utilizadas:Racket gui
+* Fecha de inicio: 18 - 6 - 2020
+* Fecha de finlaización: 29 - 6 -2020
