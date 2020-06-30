@@ -9,7 +9,7 @@
 ;se define la ventana principal
 (define ventana (open-viewport "Tic Tac Toe" 1200 680))
 
-;***********************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************
 ;matriz que se usará para guardar valores y validar posiciones correctas en el tablero
 (define matriz_logica '())
 
@@ -24,7 +24,7 @@
 
 #|
 Lista que representa los margenes de posiciones con respecto a las filas
-cada elemento representa --> (fila pos1 pos2)
+cada elemento representa --> (fila inicio fin)
 
 |#
 (define margenes_filas '((1 10 70) (2 70 130) (3 130 190) (4 190 250) (5 250 310)
@@ -34,7 +34,7 @@ cada elemento representa --> (fila pos1 pos2)
 
 #|
 Lista que representa los margenes de posiciones con respecto a las columnas
-cada elemento representa --> (fila pos1 pos2)
+cada elemento representa --> (fila inicio fin)
 
 |#
 (define margenes_columnas '((1 270 330) (2 330 390) (3 390 450) (4 450 510) (5 510 570)
@@ -49,22 +49,29 @@ cada elemento representa --> (fila pos1 pos2)
 ;función que inicializa el juego
 
 (define (TTT filas columnas)
-  ;se muestra la ventana de bienvenida
-  (desplegar_bienvenida)
+
   
   ;Creamos una matriz lógica que se usará durante toda la partida
   (set! matriz_logica (crear_matriz_logica filas columnas))
 
   ;Creamos una matriz lógica sin posiciones, o sea solo con valores (0 1 2)
-  (set! matriz_encargo (crear_matriz filas columnas)) 
+  (set! matriz_encargo (crear_matriz filas columnas))
   
-  ;Dibujamos la matriz en la pantalla
-  (crear_tablero filas columnas)
-  ;luego se inicia el juego
-  (juego filas columnas))
+  ;Ahora se valida que el tamaño de la matriz sea el correcto
+  (cond ((not (dimensiones_correctas (numero_columnas matriz_encargo) (numero_filas matriz_encargo)))
+         (print "Las dimensiones de la matriz no son válidas")
+         (close-viewport ventana))
+
+        (else
+          ;se muestra la ventana de bienvenida
+         (desplegar_bienvenida)
+         ;Dibujamos la matriz en la pantalla
+         (crear_tablero filas columnas)
+         ;luego se inicia el juego
+         (juego filas columnas))))
 
 
-;**************************************************************************************************************************************************+
+;***************************************************************************************************************************************************************************************************************************************************
 ;Ciclo principal del juego, aquí se van a ejecutar todos los turnos, siempre y cuando el usuario
 ;haya presionado clcik izquierdo.
 ;Si no lo ha hecho, el programa se queda esperando a que le dé click izquierdo
@@ -174,7 +181,7 @@ cada elemento representa --> (fila pos1 pos2)
             )
           )))
 
-;************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************
 
 ;Función que se llama una vez se haya acabado una partida
 ;se encarga de inicializar las definiciones de matrices y las capas
@@ -194,8 +201,8 @@ cada elemento representa --> (fila pos1 pos2)
   
   (juego filas columnas))
 
-;************************************************************************************************************************************
-;************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************
 
 
 ;Función que recibe el numero de filas y retorna la posicion los margenes de esa fila como una lista
@@ -207,7 +214,7 @@ cada elemento representa --> (fila pos1 pos2)
           (else (margenes_fila fila (cdr margenes)))))
 
 
-;*******************************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************
 ;Función que recibe el numero de filas y retorna la posicion los margenes de esa fila como una lista
 ;debe devolver (margen-inicial margen-final)
 (define (margenes_columna columna margenes)
@@ -217,7 +224,7 @@ cada elemento representa --> (fila pos1 pos2)
           (else (margenes_columna columna (cdr margenes)))))
 
 
-;*******************************************************************************************************************************************************         
+;***************************************************************************************************************************************************************************************************************************************************
 ;Función que valida si la posición elegida con el mouse se encuentra dentro de los márgenes de la matriz
 ;que se creó
 (define (en_matriz? posX posY filas columnas)
@@ -232,7 +239,7 @@ cada elemento representa --> (fila pos1 pos2)
         (else #f)))
 
 
-;**************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************
 ;Función que recibe una posición X y Y
 ;Se debe colocar una X en dicha posición
 (define (modificar_tablero_grafico posX posY tipo_figura)
@@ -242,7 +249,7 @@ cada elemento representa --> (fila pos1 pos2)
                   ))
 
 
-;*******************************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************
 ;Función que recibe una posición en X y valida en cuál columna se encuetra dentro del tablero
 ;devuelve la posición X que se debe usar para dibujar en dicha columna
 (define (localizar_columna posX margenes)
@@ -252,7 +259,7 @@ cada elemento representa --> (fila pos1 pos2)
 
 
 
-;*******************************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************
 ;Función que recibe una posición en X y valida en cuál columna se encuetra dentro del tablero
 ;devuelve el número de columna en el que se encuentra posX
 (define (numero_columna posX margenes)
@@ -261,7 +268,7 @@ cada elemento representa --> (fila pos1 pos2)
         (else (numero_columna posX (cdr margenes)))))
 
 
-;*******************************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************
 ;Función que recibe una posición en Y y valida en cuál fila se encuetra dentro del tablero
 ;devuelve la posición Y que se debe usar para dibujar en dicha fila
 (define (localizar_fila posY margenes)
@@ -271,7 +278,7 @@ cada elemento representa --> (fila pos1 pos2)
 
 
 
-;*******************************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************
 ;Función que recibe una posición en Y y valida en cuál fila se encuetra dentro del tablero
 ;devuelve el número de fila en el que se encuentra posX
 (define (numero_fila posY margenes)
@@ -280,7 +287,7 @@ cada elemento representa --> (fila pos1 pos2)
         (else (numero_fila posY (cdr margenes)))))
 
 
-;**************************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************
 ;Función que recibe el número de fila y retorna la posición en Y correspondiente para poder dibujar
 (define (dame_pos_f fila margenes)
   (cond ((equal? fila (caar margenes)) (cadar margenes))
@@ -288,14 +295,14 @@ cada elemento representa --> (fila pos1 pos2)
 
 
 
-;**************************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************
 ;Función que recibe el número de columna y retorna la posición en X correspondiente para poder dibujar
 (define (dame_pos_c columna margenes)
   (cond ((equal? columna (caar margenes)) (cadar margenes))
         (else (dame_pos_c columna (cdr margenes)))))
 
 
-;**************************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************
 ;Función que dado el numero de filas y columnas dibuja el tablero correspondiente
 (define (crear_tablero filas columnas)
   (let* ([ultima_posicion_x (+ 330 (* 60 (- columnas 1)))]
@@ -334,7 +341,7 @@ cada elemento representa --> (fila pos1 pos2)
   
 
 
-;*****************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************
 ;Función que muestra la pantalla de bienvenida durante 5 segundos
 (define (desplegar_bienvenida)
   ((draw-pixmap ventana) "Recursos/Negro.png" (make-posn 0 0) "black")
@@ -364,7 +371,7 @@ cada elemento representa --> (fila pos1 pos2)
   ((draw-solid-rectangle ventana) (make-posn 0 0) 1200 680 "black"))
 
 
-;******************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************
 ;Función que despliega una imagen en caso de llegar a un gane
 ;un 0 equivale a una derrota
 ;un 1 equivale a una victoria
@@ -376,7 +383,7 @@ cada elemento representa --> (fila pos1 pos2)
         
 
          
-;*****************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************
 ;Función que recibe una un valor (X o O) y una posición
 ;Dibuja una figura del tipo que se le pase por parámetro en la posición dada
 (define (colocar_figura tipo posX posY)
@@ -392,7 +399,7 @@ cada elemento representa --> (fila pos1 pos2)
 
 
 
-;**************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************
 ;Función que muestra un mensaje de alerta
 ;recibe una mensaje de tipo string
 (define (mensaje_alerta mensaje tiempo)
@@ -408,7 +415,7 @@ cada elemento representa --> (fila pos1 pos2)
 
 
 
-;***************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************
 ;Función que se encarga de crear una matriz lógica para guardar la información que se encuentra en el tablero
 ;gráfico
 
@@ -416,7 +423,7 @@ cada elemento representa --> (fila pos1 pos2)
   (cond ((and (>= filas 3) (<= filas 10) (>= columnas 3) (<= columnas 10))
          (construir_matriz filas 1 columnas '()))
         
-        (else "dimensiones inválidas")))
+        (else #f)))
 
 (define (construir_matriz filas contador_fila columnas total)
   (cond ((equal? contador_fila (+ filas 1)) (reverse total))
@@ -430,7 +437,7 @@ cada elemento representa --> (fila pos1 pos2)
                           (cons (list fila contador 0) lista)))))
 
 
-;********************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************;********************************************************************************************************************************************
 ;Función que recibe el numero de fila, columna y un valor
 ;devuelve una matriz con la nueva posición actualizada
 (define (modificar_matriz_logica matriz fila columna valor)
@@ -459,7 +466,7 @@ cada elemento representa --> (fila pos1 pos2)
 
 
 
-;**************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************
 ;Función que recibe el numero de fila y columna
 ;me dice si ese espacio tiene un 0, o sea si está disponible
 (define (disponible? fila columna matriz)
@@ -480,14 +487,12 @@ cada elemento representa --> (fila pos1 pos2)
 
 
 
-;***************************************************************************************************************************************
-;************************************************************************************************************************************
-;************************************************************************************************************************************
-;************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************;************************************************************************************************************************************
+;***************************************************************************************************************************************************************************************************************************************************;***************************************************************************************************************************************************************************************************************************************************
 ;EN ESTE ESPACIO SE PUEDEN HACER LAS PRUEBAS CORRESPONDIENTES
 
 ;se llama a la función principal del juego con el número de filas y el número de columnas
-(TTT 4 4)
+(TTT 3 3)
 
 
 

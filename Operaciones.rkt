@@ -50,8 +50,7 @@ Entrada: El numero de columnas y el número de filas que debe tener la matriz
 Salida: Una matriz vacía (con 0´s) con el tamaño indicado por la entrada.
 |#
 (define (crear_matriz filas columnas)
-  (cond ((not (dimensiones_correctas columnas filas)) "Las dimensiones dadas no son correctas")
-        (else (crear_matriz_aux filas columnas columnas '() '()))))
+  (crear_matriz_aux filas columnas columnas '() '()))
 
 
 ;Función auxiliar para crear la matriz
