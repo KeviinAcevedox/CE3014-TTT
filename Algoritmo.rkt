@@ -479,4 +479,6 @@ función de solución.
 
 ;función auxiliar de objetivo
 (define (objetivo_aux matriz elegido vectores_solucion)
-  (solucion? (actualizar_matriz elegido 2 matriz) (actualizar_vectores_solucion elegido vectores_solucion '()) elegido))
+  (cond ((Empate? (actualizar_matriz elegido 2 matriz)) (list (car elegido) (cadr elegido) 3))
+        (else (solucion? (actualizar_matriz elegido 2 matriz)
+                         (actualizar_vectores_solucion elegido vectores_solucion '()) elegido))))
