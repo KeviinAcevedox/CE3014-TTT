@@ -43,7 +43,7 @@ Cada sección va a contener un conjunto de funciones que hacen posible el funcio
 ;**************************************************************************************************************************
 
 #|
-Esta es una función entre el conjunto de candidatos y la selección.
+Esta es una fusión entre el conjunto de candidatos y la selección.
 El objetivo de esta función es insertar en una lista aquellos elementos que estén formados por un 0
 eso quiere decir que los elementos están disponibles para ser elegidos.
 
@@ -95,7 +95,7 @@ Salida: una lista con todos los vectores soluciones posibles para el valor brind
 ;Se agregan las diagonales inversas (\)
 (define (agregar_diagonal_inversa matriz_exacta vectores_total valor)
    (agregar_diagonal matriz_exacta (append (dame_diagonales_inversas matriz_exacta)
-                                           vectores_total) valor))
+                                          vectores_total) valor))
 
 ;Se agregan las diagonales (/)
 (define (agregar_diagonal matriz_exacta vectores_total valor)
@@ -133,7 +133,7 @@ Salida: una lista con todos los candidatos pero con su Plus evaluado, o sea con 
 
 
 #|
-Esta es la función auxiliar de entrevista, su trabajo es tomar a todos y cada uno de los candidatos seleccionados y
+Esta es la función auxilizar de entrevista, su trabajo es tomar a todos y cada uno de los candidatos seleccionados y
 enviarlos a la función Plus junto con la lista de vectores soluciones para poder darles un valor de viabilidad.
 |#
 (define (entrevista_aux candidatos vectores_solucion candidatos_potenciales)
