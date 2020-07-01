@@ -480,3 +480,5 @@ función de solución.
 ;función auxiliar de objetivo
 (define (objetivo_aux matriz elegido vectores_solucion)
   (solucion? (actualizar_matriz elegido 2 matriz) (actualizar_vectores_solucion elegido vectores_solucion '()) elegido))
+
+(define matriz '((1 2 1 2) (0 1 2 1) (2 1 2 1)))
